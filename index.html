@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planning Timeline Oktober 2026 - Interaktif</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Inter & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#0f382b',
+                            DEFAULT: '#1b4d3e',
+                            light: '#2c6b56',
+                            accent: '#e6f4ea'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .custom-shadow { box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.08); }
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; }
+            .custom-shadow { box-shadow: none !important; border: none !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between">
+
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+                    <i class="fa-solid fa-calendar-days text-emerald-700"></i> PLANNING TIMELINE OKTOBER 2026
+                </h1>
+                <p class="text-xs sm:text-sm text-slate-500 mt-0.5">Langkah nyata untuk operasional yang lebih kuat, untuk masa depan yang lebih baik.</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+                <button onclick="openAddModal()" class="px-3.5 py-2 text-xs sm:text-sm font-medium bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl shadow-md transition flex items-center gap-2">
+                    <i class="fa-solid fa-plus"></i> Tambah Baris
+                </button>
+                <button onclick="window.print()" class="px-3.5 py-2 text-xs sm:text-sm font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl transition flex items-center gap-2">
+                    <i class="fa-solid fa-print"></i> Cetak / PDF
+                </button>
+                <button onclick="resetData()" class="px-3.5 py-2 text-xs sm:text-sm font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl transition flex items-center gap-2">
+                    <i class="fa-solid fa-rotate-right"></i> Reset
+                </button>
+                <button onclick="saveData()" class="px-3.5 py-2 text-xs sm:text-sm font-medium bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-md transition flex items-center gap-2">
+                    <i class="fa-solid fa-floppy-disk"></i> Simpan
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+        
+        <!-- Notification Toast -->
+        <div id="toast" class="hidden mb-6 p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl text-sm flex items-center justify-between transition-all no-print">
+            <span id="toast-msg" class="flex items-center gap-2 font-medium">
+                <i class="fa-solid fa-circle-check text-emerald-600"></i> Perubahan berhasil disimpan ke perangkat Anda!
+            </span>
+            <button onclick="document.getElementById('toast').classList.add('hidden')" class="text-emerald-600 hover:text-emerald-900 font-bold">&times;</button>
+        </div>
+
+        <div class="bg-white rounded-2xl custom-shadow border border-slate-200 overflow-hidden">
+            <!-- Table Info Bar -->
+            <div class="p-4 sm:p-6 bg-slate-900 text-white flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h2 class="text-lg font-semibold">Daftar Kegiatan & Target Operasional</h2>
+                    <p class="text-xs text-slate-300">Klik langsung pada kolom <span class="text-emerald-400 font-medium underline">PIC</span> untuk mengubah nama penanggung jawab.</p>
+                </div>
+                <div class="flex items-center gap-2 bg-slate-800 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-300">
+                    <i class="fa-solid fa-circle-info text-emerald-400"></i> Kolom PIC sepenuhnya dapat diedit
+                </div>
+            </div>
+
+            <!-- Responsive Table Wrapper -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-sm">
+                    <thead>
+                        <tr class="bg-slate-100 text-slate-700 font-semibold border-b border-slate-200 text-xs uppercase tracking-wider">
+                            <th class="py-4 px-3 text-center w-12">No</th>
+                            <th class="py-4 px-4 min-w-[200px]">Agenda / Kegiatan</th>
+                            <th class="py-4 px-4 min-w-[220px]">Target / Output</th>
+                            <th class="py-4 px-4 min-w-[160px] bg-emerald-50/60 text-emerald-900">PIC (Bisa Diedit)</th>
+                            <th class="py-4 px-2 text-center w-24">W1<br><span class="text-[10px] font-normal text-slate-500">5-11 Okt</span></th>
+                            <th class="py-4 px-2 text-center w-24">W2<br><span class="text-[10px] font-normal text-slate-500">12-18 Okt</span></th>
+                            <th class="py-4 px-2 text-center w-24">W3<br><span class="text-[10px] font-normal text-slate-500">19-25 Okt</span></th>
+                            <th class="py-4 px-2 text-center w-24">W4<br><span class="text-[10px] font-normal text-slate-500">26-31 Okt</span></th>
+                            <th class="py-4 px-4 text-center min-w-[100px]">Status</th>
+                            <th class="py-4 px-3 text-center w-16 no-print">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="timeline-tbody" class="divide-y divide-slate-100 text-slate-700">
+                        <!-- Content injected via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+            <!-- Priorities -->
+            <div class="bg-white p-6 rounded-2xl custom-shadow border border-slate-200">
+                <h3 class="font-bold text-slate-900 flex items-center gap-2 mb-4 text-base">
+                    <i class="fa-solid fa-list-check text-emerald-700"></i> Prioritas Utama Oktober 2026
+                </h3>
+                <ul class="space-y-3 text-sm text-slate-600">
+                    <li class="flex items-center gap-3">
+                        <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center justify-center shrink-0">1</span>
+                        <span>Mobil & aplikasi (minggu depan)</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center justify-center shrink-0">2</span>
+                        <span>Pembelian mesin press (maks. 14 hari)</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center justify-center shrink-0">3</span>
+                        <span>Finalisasi pembagian hasil (bulan ini)</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center justify-center shrink-0">4</span>
+                        <span>Pastikan semua berjalan sesuai timeline dan target.</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Timeline Purpose -->
+            <div class="bg-white p-6 rounded-2xl custom-shadow border border-slate-200">
+                <h3 class="font-bold text-slate-900 flex items-center gap-2 mb-4 text-base">
+                    <i class="fa-solid fa-bullseye text-emerald-700"></i> Timeline Ini Disusun Untuk:
+                </h3>
+                <ul class="space-y-3 text-sm text-slate-600">
+                    <li class="flex items-start gap-3">
+                        <i class="fa-solid fa-check text-emerald-600 mt-1"></i>
+                        <span>Kelancaran operasional harian</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fa-solid fa-check text-emerald-600 mt-1"></i>
+                        <span>Efisiensi pengelolaan bisnis</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fa-solid fa-check text-emerald-600 mt-1"></i>
+                        <span>Transparansi kepada direksi & penanam saham</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fa-solid fa-check text-emerald-600 mt-1"></i>
+                        <span>Mendukung pertumbuhan bisnis yang berkelanjutan</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </main>
+
+    <div id="add-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-plus text-emerald-600"></i> Tambah Kegiatan Baru
+                </h3>
+                <button onclick="closeAddModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
+            </div>
+            <form id="add-form" onsubmit="addNewItem(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Agenda / Kegiatan</label>
+                    <input type="text" id="new-agenda" required class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="Contoh: Audit keuangan bulanan">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Target / Output</label>
+                    <input type="text" id="new-target" required class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="Contoh: Laporan audit selesai">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">PIC (Penanggung Jawab)</label>
+                    <input type="text" id="new-pic" required class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="Contoh: Finance">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Minggu Aktif (W1-W4)</label>
+                        <select id="new-week" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                            <option value="0">Minggu 1 (W1)</option>
+                            <option value="1">Minggu 2 (W2)</option>
+                            <option value="2">Minggu 3 (W3)</option>
+                            <option value="3">Minggu 4 (W4)</option>
+                            <option value="2-span">Minggu 1 & 2 (Panjang)</option>
+                            <option value="3-span">Minggu 3 & 4 (Panjang)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Status</label>
+                        <select id="new-status" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                            <option value="On Plan">On Plan</option>
+                            <option value="Proses">Proses</option>
+                            <option value="Belum Mulai">Belum Mulai</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-3 pt-4">
+                    <button type="button" onclick="closeAddModal()" class="px-4 py-2 text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl transition">Batal</button>
+                    <button type="submit" class="px-4 py-2 text-xs font-medium bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-md transition">Simpan Kegiatan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer class="bg-white border-t border-slate-200 py-6 mt-12 text-center text-xs text-slate-500 no-print">
+        <p>Interactive Planning Timeline &copy; 2026 &bull; Dibuat khusus untuk kemudahan pengelolaan operasional.</p>
+    </footer>
+
+    <script>
+        const defaultData = [
+            {
+                id: 1,
+                icon: 'fa-car',
+                agenda: 'Pembelian mobil (bekas/baru)',
+                target: 'Mobil sudah dipilih & transaksi selesai',
+                pic: 'Management',
+                weeks: [1, 0, 0, 0],
+                status: 'On Plan'
+            },
+            {
+                id: 2,
+                icon: 'fa-mobile-screen',
+                agenda: 'Finalisasi aplikasi',
+                target: 'Aplikasi siap digunakan',
+                pic: 'IT / Developer',
+                weeks: [1, 0, 0, 0],
+                status: 'On Plan'
+            },
+            {
+                id: 3,
+                icon: 'fa-gears',
+                agenda: 'Pembelian mesin press',
+                target: 'Mesin sudah dibeli & siap masuk workshop',
+                pic: 'Operasional',
+                weeks: [2, 0, 0, 0],
+                status: 'On Plan'
+            },
+            {
+                id: 4,
+                icon: 'fa-calculator',
+                agenda: 'Persiapan perhitungan bagi hasil',
+                target: 'Data omzet, biaya, investasi & kewajiban terkumpul',
+                pic: 'Finance',
+                weeks: [3, 0, 0, 0],
+                status: 'Proses'
+            },
+            {
+                id: 5,
+                icon: 'fa-file-lines',
+                agenda: 'Implementasi aplikasi',
+                target: 'Mulai digunakan untuk pencatatan nasabah/transaksi',
+                pic: 'Admin',
+                weeks: [0, 1, 0, 0],
+                status: 'On Plan'
+            },
+            {
+                id: 6,
+                icon: 'fa-truck',
+                agenda: 'Mobil mulai operasional',
+                target: 'Armada siap untuk operasional',
+                pic: 'Operasional',
+                weeks: [0, 1, 0, 0],
+                status: 'On Plan'
+            },
+            {
+                id: 7,
+                icon: 'fa-gears',
+                agenda: 'Mesin press',
+                target: 'Instalasi, testing & mulai digunakan',
+                pic: 'Operasional',
+                weeks: [0, 0, 1, 0],
+                status: 'On Plan'
+            },
+            {
+                id: 8,
+                icon: 'fa-chart-line',
+                agenda: 'Finalisasi pembagian hasil',
+                target: 'Perhitungan final untuk direksi & penanam saham',
+                pic: 'Finance / Management',
+                weeks: [0, 0, 4, 0],
+                status: 'Proses'
+            },
+            {
+                id: 9,
+                icon: 'fa-coins',
+                agenda: 'Pembagian hasil',
+                target: 'Kesepakatan & realisasi pembagian hasil',
+                pic: 'Direksi / Investor',
+                weeks: [0, 0, 0, 1],
+                status: 'Belum Mulai'
+            },
+            {
+                id: 10,
+                icon: 'fa-clipboard-check',
+                agenda: 'Review bulan pertama',
+                target: 'Evaluasi operasional, cashflow & target November',
+                pic: 'Management',
+                weeks: [0, 0, 0, 5],
+                status: 'Belum Mulai'
+            }
+        ];
+
+        let timelineData = JSON.parse(localStorage.getItem('timeline_oktober_2026_clean')) || defaultData;
+
+        function renderTable() {
+            const tbody = document.getElementById('timeline-tbody');
+            tbody.innerHTML = '';
+
+            timelineData.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50/80 transition duration-150";
+
+                let statusClass = "bg-emerald-100 text-emerald-800 border border-emerald-200";
+                if (item.status === 'Proses') statusClass = "bg-amber-100 text-amber-800 border border-amber-200";
+                if (item.status === 'Belum Mulai') statusClass = "bg-slate-100 text-slate-600 border border-slate-200";
+
+                let wCells = '';
+                for (let w = 0; w < 4; w++) {
+                    let barHTML = '';
+                    if (item.weeks[w] === 1) {
+                        barHTML = `<div class="mx-auto h-7 bg-emerald-600 rounded-lg shadow-sm w-11/12 flex items-center justify-center text-white text-xs"></div>`;
+                    } else if (item.weeks[w] === 2) {
+                        if (w === 0) barHTML = `<div class="absolute left-1 right-[-100%] h-7 bg-emerald-600 rounded-lg shadow-sm z-10"></div>`;
+                    } else if (item.weeks[w] === 3) {
+                        if (w === 0) barHTML = `<div class="absolute left-1 right-[-100%] h-7 bg-amber-500 rounded-lg shadow-sm z-10"></div>`;
+                    } else if (item.weeks[w] === 4) {
+                        if (w === 2) barHTML = `<div class="absolute left-1 right-[-100%] h-7 bg-amber-500 rounded-lg shadow-sm z-10"></div>`;
+                    } else if (item.weeks[w] === 5) {
+                        if (w === 3) barHTML = `<div class="absolute left-1 right-[-5%] h-7 bg-blue-600 rounded-lg shadow-sm z-10"></div>`;
+                    }
+                    wCells += `<td class="py-3 px-2 text-center relative"><div class="relative w-full h-8 flex items-center justify-center">${barHTML}</div></td>`;
+                }
+
+                tr.innerHTML = `
+                    <td class="py-4 px-3 text-center font-medium text-slate-400 text-xs">${index + 1}</td>
+                    <td class="py-4 px-4 font-medium text-slate-900 flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 border border-emerald-100">
+                            <i class="fa-solid ${item.icon || 'fa-circle-dot'} text-sm"></i>
+                        </div>
+                        <span>${item.agenda}</span>
+                    </td>
+                    <td class="py-4 px-4 text-slate-600 text-xs leading-relaxed">${item.target}</td>
+                    <td class="py-4 px-4 bg-emerald-50/30">
+                        <input type="text" value="${item.pic}" onchange="updatePIC(${index}, this.value)" 
+                            class="w-full px-3 py-1.5 text-xs bg-white border border-emerald-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium text-slate-800 shadow-sm transition"
+                            placeholder="Ketik PIC...">
+                    </td>
+                    ${wCells}
+                    <td class="py-4 px-4 text-center">
+                        <span class="px-2.5 py-1 text-[11px] font-semibold rounded-full ${statusClass}">
+                            ${item.status}
+                        </span>
+                    </td>
+                    <td class="py-4 px-3 text-center no-print">
+                        <button onclick="deleteItem(${index})" class="text-slate-400 hover:text-red-600 p-1.5 rounded-lg transition" title="Hapus Baris">
+                            <i class="fa-solid fa-trash-can text-xs"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function updatePIC(index, val) {
+            timelineData[index].pic = val;
+        }
+
+        function openAddModal() {
+            document.getElementById('add-modal').classList.remove('hidden');
+        }
+
+        function closeAddModal() {
+            document.getElementById('add-modal').classList.add('hidden');
+            document.getElementById('add-form').reset();
+        }
+
+        function addNewItem(e) {
+            e.preventDefault();
+            const agenda = document.getElementById('new-agenda').value;
+            const target = document.getElementById('new-target').value;
+            const pic = document.getElementById('new-pic').value;
+            const weekVal = document.getElementById('new-week').value;
+            const status = document.getElementById('new-status').value;
+
+            let weeks = [0, 0, 0, 0];
+            if (weekVal === '0') weeks = [1, 0, 0, 0];
+            else if (weekVal === '1') weeks = [0, 1, 0, 0];
+            else if (weekVal === '2') weeks = [0, 0, 1, 0];
+            else if (weekVal === '3') weeks = [0, 0, 0, 1];
+            else if (weekVal === '2-span') weeks = [2, 0, 0, 0];
+            else if (weekVal === '3-span') weeks = [0, 0, 4, 0];
+
+            timelineData.push({
+                id: timelineData.length + 1,
+                icon: 'fa-tasks',
+                agenda,
+                target,
+                pic,
+                weeks,
+                status
+            });
+
+            renderTable();
+            closeAddModal();
+            saveData();
+        }
+
+        function deleteItem(index) {
+            if (confirm("Apakah Anda yakin ingin menghapus baris kegiatan ini?")) {
+                timelineData.splice(index, 1);
+                renderTable();
+                saveData();
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem('timeline_oktober_2026_clean', JSON.stringify(timelineData));
+            const toast = document.getElementById('toast');
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+
+        function resetData() {
+            if(confirm("Apakah Anda yakin ingin mereset seluruh data kembali ke pengaturan awal?")) {
+                localStorage.removeItem('timeline_oktober_2026_clean');
+                timelineData = JSON.parse(JSON.stringify(defaultData));
+                renderTable();
+                const toast = document.getElementById('toast');
+                document.getElementById('toast-msg').innerHTML = `<i class="fa-solid fa-rotate-right text-emerald-600"></i> Data berhasil direset ke pengaturan awal!`;
+                toast.classList.remove('hidden');
+                setTimeout(() => {
+                    toast.classList.add('hidden');
+                }, 3000);
+            }
+        }
+
+        window.onload = function() {
+            renderTable();
+        };
+    </script>
+</body>
+</html>
